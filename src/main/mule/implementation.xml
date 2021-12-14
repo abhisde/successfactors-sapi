@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:successfactors="http://www.mulesoft.org/schema/mule/successfactors"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/successfactors http://www.mulesoft.org/schema/mule/successfactors/current/mule-successfactors.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="getEmployees" doc:id="483299c6-01e5-4d3f-9261-7a5626e78578" initialState="started">
+		<successfactors:query doc:name="Query" doc:id="777c8148-accc-49ab-afee-899055c0c90f" config-ref="SAP_SuccessFactors_Configuration" entitySetName="User" select="username, userId, jobCode, status, addressLine1, addressLine2, city, state, country, zipCode, email, firstName, lastName, gender"/>
+		<ee:transform doc:name="Transform Message" doc:id="1f91e7b4-7ea2-4b77-a033-77333384fd6b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+	country: payload01.country default "",
+	zipCode: payload01.zipCode as Number default 0,
+	hireDate: payload01.hireDate as String default "",
+	city: payload01.city default "",
+	jobCode: payload01.jobCode default "",
+	userId: payload01.userId,
+	fullname: (payload01.firstName default "") ++ " " ++ (payload01.lastName default ""),
+	addressLine1: payload01.addressLine1 default "",
+	addressLine2: payload01.addressLine2,
+	state: payload01.state default "",
+	department: payload01.department default "",
+	email: payload01.email default "",
+	username: payload01.username default "",
+	status: payload01.status
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="getEmployeeByID" doc:id="55ec757c-1669-404f-8a28-c2ee02da08ea" initialState="started">
+		<ee:transform doc:name="Transform Message" doc:id="f71cb64e-bfe2-4744-aae7-dd1c0c282624" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	userId: attributes.uriParams.ID
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<successfactors:get-entity-by-id doc:name="Get entity by id" doc:id="fc92b14d-625c-4eb7-b3f0-9a5dadc15f75" config-ref="SAP_SuccessFactors_Configuration" entitySetName="User" select="username, userId, jobCode, status, addressLine1, addressLine2, city, state, country, zipCode, email, firstName, lastName, gender" />
+		<ee:transform doc:name="Transform Message" doc:id="06fa8477-33fb-48e3-8f5a-d9dbf4b1c3f7">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	username: payload.username default "",
+	userId: payload.userId,
+	jobCode: payload.jobCode default "",
+	status: payload.status,
+	department: payload.department default "",
+	//hireDate: payload.hireDate as String{format: "yyyy-MM-dd"},
+	hireDate: payload.hireDate as String default "",
+	addressLine1: payload.addressLine1 default "",
+	addressLine2: payload.addressLine2 default "",
+	city: payload.city default "",
+	state: payload.state default "",
+	country: payload.country default "",
+	zipCode: payload.zipCode as Number default 0,
+	email: payload.email default "",
+	fullname: (if (payload.lastName != "")  (payload.firstName default "") ++ (" " ++ payload.lastName default "") else (payload.firstName default ""))
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<error-handler>
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="d452830b-eaf9-4d54-b7dd-880502b45550" type="SUCCESSFACTORS:NOT_FOUND">
+				<ee:transform doc:name="Transform Message" doc:id="26a62c18-dbc8-4de3-bcfd-5a17896d7547" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "payload does not exist for " ++ attributes.uriParams.ID
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>

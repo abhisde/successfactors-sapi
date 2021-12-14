@@ -1,0 +1,34 @@
+[
+  {
+    "username": "Caspex1",
+    "userId": "Caspex1",
+    "fullname": "Caspex1 Man",
+    "jobCode": "PRG",
+    "status": "t",
+    "department": "Manufacturing",
+    "hireDate": "01/01/2021",
+    "addressLine1": "5 Wylie St",
+    "addressLine2": "N/A",
+    "city": "Hamilton",
+    "state": "NY",
+    "country": "USA",
+    "zipCode": 43230,
+    "email": "user@successfactors.com"
+  },
+  {
+    "username": "Caspex1",
+    "userId": "Caspex1",
+    "fullname": "Caspex1 Man",
+    "jobCode": "PRG",
+    "status": "t",
+    "department": "Manufacturing",
+    "hireDate": "01/01/2021",
+    "addressLine1": "5 Wylie St",
+    "addressLine2": "N/A",
+    "city": "Hamilton",
+    "state": "NY",
+    "country": "USA",
+    "zipCode": 43230,
+    "email": "user@successfactors.com"
+  }
+]

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:successfactors="http://www.mulesoft.org/schema/mule/successfactors"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/successfactors http://www.mulesoft.org/schema/mule/successfactors/current/mule-successfactors.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<successfactors:config name="SAP_SuccessFactors_Configuration" doc:name="SAP SuccessFactors Configuration" doc:id="55c6676f-670a-42db-8cfe-efc0f120404b" >
+		<successfactors:basic-connection companyId="${successfactors.company}" userName="${successfactors.user}" password="${successfactors.password}" endpointUrl="https://api4preview.sapsf.com/odata/v2/" />
+	</successfactors:config>
+	<configuration-properties doc:name="Configuration properties" doc:id="b12853fd-f515-4f74-ade6-a1f2ae36f7ea" file="config.yaml" />
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="1c8e0d42-fa85-4166-9b81-597bc4851591" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+</mule>
